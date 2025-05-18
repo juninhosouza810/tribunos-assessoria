@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tribunus Assessoria</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #111;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .container {
+      width: 90%;
+      max-width: 420px;
+      margin-top: 40px;
+      background: #1a1a1a;
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 0 12px rgba(255, 255, 255, 0.1);
+      position: relative;
+    }
+    .logo {
+      width: 100px;
+      display: block;
+      margin: 0 auto 20px auto;
+      animation: glow 2s infinite ease-in-out;
+    }
+    @keyframes glow {
+      0%, 100% { filter: drop-shadow(0 0 4px rgba(255,255,255,0.5)); }
+      50% { filter: drop-shadow(0 0 10px rgba(255,255,255,0.9)); }
+    }
+    h1, h2 { text-align: center; margin: 0; }
+    h2 {
+      font-size: 16px;
+      color: #ccc;
+      margin-bottom: 30px;
+    }
+    input, button {
+      width: 100%;
+      padding: 14px;
+      margin: 10px 0;
+      border-radius: 10px;
+      font-size: 16px;
+      border: 1px solid #333;
+      background-color: #222;
+      color: white;
+      transition: 0.3s ease;
+    }
+    input:focus {
+      border-color: crimson;
+      outline: none;
+    }
+    button {
+      background: crimson;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(220, 20, 60, 0.4);
+    }
+    button:hover {
+      background: #e60026;
+      box-shadow: 0 6px 14px rgba(220, 20, 60, 0.6);
+    }
+    .icons {
+      display: none;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 20px;
+    }
+    .icon-button {
+      width: 100px;
+      height: 100px;
+      background: #222;
+      margin: 10px;
+      border-radius: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 40px;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.2s;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+    }
+    .icon-button:hover {
+      background: crimson;
+      transform: scale(1.05);
+    }
+    .admin-panel { display: none; margin-top: 20px; }
+    .admin-panel input { background: #333; color: white; }
+    .admin-panel label {
+      font-size: 14px;
+      margin-top: 10px;
+      display: block;
+    }
+    .settings-button {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      font-size: 24px;
+      cursor: pointer;
+      color: white;
+      z-index: 10;
+    }
+    .logout-button {
+      display: none;
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      font-size: 22px;
+      cursor: pointer;
+      color: white;
+      z-index: 10;
+    }
+    .logout-button:hover {
+      color: crimson;
+    }
+    .member-list {
+      display: none;
+      margin-top: 20px;
+    }
+    .member {
+      background: #333;
+      padding: 10px;
+      margin: 5px 0;
+      border-radius: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .member i {
+      color: crimson;
+      cursor: pointer;
+    }
+    #welcomeMessage {
+      display: none;
+      text-align: center;
+      margin-top: 20px;
+      font-size: 18px;
+      color: lightgreen;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="settings-button" onclick="openSettings()">
+      <i class="fas fa-cog"></i>
+    </div>
+
+    <div class="logout-button" id="logoutBtn" onclick="logoutMembro()" title="Sair">
+      <i class="fas fa-sign-out-alt"></i>
+    </div>
+
+    <img class="logo" src="https://github.com/user-attachments/assets/f580fafd-dd25-479c-b039-01d06db0654e" alt="Logo Tribunus">
+    <h1>Tribunos</h1>
+    <h2>Assessoria Jurídica Militar</h2>
+
+    <div id="loginForm">
+      <input type="text" id="username" placeholder="Usuário (CPF)">
+      <input type="password" id="password" placeholder="Senha">
+      <button onclick="login()">Entrar</button>
+    </div>
+
+    <div id="welcomeMessage"></div>
+
+    <div class="icons" id="iconArea">
+      <div class="icon-button" onclick="window.open('https://www.youtube.com/watch?v=6SVIafBQhRo')">
+        <i class="fab fa-youtube"></i>
+      </div>
+      <div class="icon-button" onclick="window.open('https://www.tiktok.com/@cleversonoliveira1981/video/7500227767028419845')">
+        <i class="fab fa-tiktok"></i>
+      </div>
+      <div class="icon-button" onclick="window.open('https://www.youtube.com/results?search_query=marketing')">
+        <i class="fas fa-chart-line"></i>
+      </div>
+      <div class="icon-button" onclick="window.open('https://www.instagram.com')">
+        <i class="fab fa-instagram"></i>
+      </div>
+      <div class="icon-button" onclick="window.open('https://www.facebook.com')">
+        <i class="fab fa-facebook-f"></i>
+      </div>
+      <div class="icon-button" onclick="window.open('https://wa.me/5599999999999')">
+        <i class="fab fa-whatsapp"></i>
+      </div>
+    </div>
+
+    <div class="admin-panel" id="adminPanel">
+      <input type="text" id="nome" placeholder="Nome">
+      <input type="text" id="cpf" placeholder="CPF">
+      <input type="text" id="telefone" placeholder="Telefone">
+      <input type="text" id="cidade" placeholder="Cidade">
+      <input type="password" id="senhaMembro" placeholder="Senha para login">
+      <button onclick="adicionarMembro()">Cadastrar Membro</button>
+      <button onclick="toggleMemberList()">Listar Membros</button>
+      <button onclick="gerarPDF()">Gerar PDF</button>
+      <button onclick="voltarTelaInicial()">Voltar</button>
+    </div>
+
+    <div class="member-list" id="memberList"></div>
+  </div>
+
+  <script>
+    function login() {
+      const user = document.getElementById("username").value;
+      const pass = document.getElementById("password").value;
+      const membros = JSON.parse(localStorage.getItem("membros")) || [];
+      const adminUser = "admin";
+      const adminPass = "1234";
+
+      if (user === adminUser && pass === adminPass) {
+        document.getElementById("loginForm").style.display = "none";
+        document.getElementById("iconArea").style.display = "flex";
+        document.querySelector(".settings-button").style.display = "none";
+      } else {
+        const membro = membros.find(m => m.cpf === user && m.senha === pass);
+        if (membro) {
+          document.getElementById("loginForm").style.display = "none";
+          document.getElementById("iconArea").style.display = "flex";
+
+          const firstName = membro.nome.split(" ")[0];
+          const welcomeDiv = document.getElementById("welcomeMessage");
+          welcomeDiv.innerText = `Seja bem-vindo, ${firstName}`;
+          welcomeDiv.style.display = "block";
+
+          document.getElementById("logoutBtn").style.display = "block";
+          document.querySelector(".settings-button").style.display = "none";
+        } else {
+          alert("Usuário ou senha incorretos.");
+        }
+      }
+    }
+
+    function logoutMembro() {
+      document.getElementById("iconArea").style.display = "none";
+      document.getElementById("welcomeMessage").style.display = "none";
+      document.getElementById("loginForm").style.display = "block";
+      document.getElementById("logoutBtn").style.display = "none";
+      document.querySelector(".settings-button").style.display = "block";
+    }
+
+    function openSettings() {
+      const senha = prompt("Digite a senha de administrador:");
+      if (senha === "Tribunos2025") {
+        document.getElementById("adminPanel").style.display = "block";
+        carregarMembros();
+      } else {
+        alert("Senha incorreta!");
+      }
+    }
+
+    function adicionarMembro() {
+      const nome = document.getElementById("nome").value;
+      const cpf = document.getElementById("cpf").value;
+      const telefone = document.getElementById("telefone").value;
+      const cidade = document.getElementById("cidade").value;
+      const senha = document.getElementById("senhaMembro").value;
+
+      const membros = JSON.parse(localStorage.getItem("membros")) || [];
+      membros.push({ nome, cpf, telefone, cidade, senha });
+      localStorage.setItem("membros", JSON.stringify(membros));
+
+      document.getElementById("nome").value = "";
+      document.getElementById("cpf").value = "";
+      document.getElementById("telefone").value = "";
+      document.getElementById("cidade").value = "";
+      document.getElementById("senhaMembro").value = "";
+
+      carregarMembros();
+    }
+
+    function carregarMembros() {
+      const lista = document.getElementById("memberList");
+      const membros = JSON.parse(localStorage.getItem("membros")) || [];
+      lista.innerHTML = "";
+
+      membros.forEach((m, index) => {
+        const div = document.createElement("div");
+        div.className = "member";
+        div.innerHTML = `${m.nome} - ${m.cpf} <i class='fas fa-trash' onclick='removerMembro(${index})'></i>`;
+        lista.appendChild(div);
+      });
+    }
+
+    function removerMembro(index) {
+      if (confirm("Deseja realmente excluir este membro?")) {
+        const membros = JSON.parse(localStorage.getItem("membros")) || [];
+        membros.splice(index, 1);
+        localStorage.setItem("membros", JSON.stringify(membros));
+        carregarMembros();
+      }
+    }
+
+    function toggleMemberList() {
+      const list = document.getElementById("memberList");
+      if (list.style.display === "none" || list.style.display === "") {
+        carregarMembros();
+        list.style.display = "block";
+      } else {
+        list.style.display = "none";
+      }
+    }
+
+    function voltarTelaInicial() {
+      document.getElementById("adminPanel").style.display = "none";
+      document.getElementById("memberList").style.display = "none";
+      document.getElementById("iconArea").style.display = "none";
+      document.getElementById("loginForm").style.display = "block";
+      document.getElementById("welcomeMessage").style.display = "none";
+      document.getElementById("logoutBtn").style.display = "none";
+      document.querySelector(".settings-button").style.display = "block";
+    }
+
+    function gerarPDF() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      const membros = JSON.parse(localStorage.getItem("membros")) || [];
+
+      let y = 10;
+      doc.text("Lista de Membros", 10, y);
+      y += 10;
+
+      membros.forEach(m => {
+        doc.text(`Nome: ${m.nome}, CPF: ${m.cpf}, Tel: ${m.telefone}, Cidade: ${m.cidade}`, 10, y);
+        y += 10;
+      });
+
+      doc.save("membros.pdf");
+    }
+  </script>
+
+</body>
+</html>
